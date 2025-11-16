@@ -49,6 +49,7 @@ coroutinesTest = "1.8.1"
 turbine = "1.1.0"
 truth = "1.4.4"
 testRunner = "1.6.2"
+archCoreTesting = "2.2.0"
 
 # Code Quality
 detekt = "1.23.6"
@@ -112,6 +113,7 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCoreTesting" }
 
 # Testing - Android Tests
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
