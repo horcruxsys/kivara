@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SmellBaseline>
+  <!-- This is the baseline file for Detekt -->
+  <!-- Add issues to ignore here during initial setup -->
+</SmellBaseline>
