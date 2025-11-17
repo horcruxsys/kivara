@@ -114,12 +114,9 @@ object NetworkModule {
             .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-            .apply {
-                // Only apply certificate pinning if pins are configured
-                if (certificatePinner.pins.isNotEmpty()) {
-                    certificatePinner(certificatePinner)
-                }
-            }
+            // Certificate pinning is configured but empty by default
+            // Add pins in provideCertificatePinner() before enabling
+            // .certificatePinner(certificatePinner)
             .connectionSpecs(listOf(connectionSpec, ConnectionSpec.CLEARTEXT))
             .addInterceptor { chain ->
                 // Add common headers including User-Agent
