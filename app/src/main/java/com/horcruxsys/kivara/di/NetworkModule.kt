@@ -1,5 +1,6 @@
 package com.horcruxsys.kivara.di
 
+import android.os.Build
 import com.horcruxsys.kivara.BuildConfig
 import dagger.Module
 import dagger.Provides
@@ -7,8 +8,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.CertificatePinner
+import okhttp3.ConnectionSpec
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -26,6 +29,7 @@ object NetworkModule {
 
     private const val BASE_URL = "https://api.example.com/" // TODO: Replace with actual API URL
     private const val TIMEOUT_SECONDS = 30L
+    private const val APP_VERSION = BuildConfig.VERSION_NAME
 
     /**
      * Provides JSON serializer configuration.
@@ -62,7 +66,10 @@ object NetworkModule {
      * the server's certificate against known pins.
      * 
      * TODO: Add actual certificate pins for your production API
-     * You can get the certificate pins using: openssl s_client -servername api.example.com -connect api.example.com:443 | openssl x509 -pubkey -noout | openssl rsa -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+     * You can get the certificate pins using: 
+     * openssl s_client -servername api.example.com -connect api.example.com:443 | 
+     * openssl x509 -pubkey -noout | openssl rsa -pubin -outform der | 
+     * openssl dgst -sha256 -binary | openssl enc -base64
      */
     @Provides
     @Singleton
@@ -75,33 +82,56 @@ object NetworkModule {
     }
 
     /**
+     * Provides connection spec for TLS configuration.
+     * Enforces TLS 1.2 and 1.3 for secure connections.
+     */
+    @Provides
+    @Singleton
+    fun provideConnectionSpec(): ConnectionSpec {
+        return ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+            .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_3)
+            .build()
+    }
+
+    /**
      * Provides configured OkHttpClient with security features.
      * Includes:
      * - Connection timeouts
-     * - Certificate pinning
+     * - Certificate pinning (when configured)
+     * - TLS 1.2/1.3 enforcement
      * - Logging interceptor (debug only)
-     * - TLS 1.2/1.3 support
+     * - User-Agent header
+     * - Common headers
      */
     @Provides
     @Singleton
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        certificatePinner: CertificatePinner
+        certificatePinner: CertificatePinner,
+        connectionSpec: ConnectionSpec
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-            .certificatePinner(certificatePinner)
-            .addInterceptor(loggingInterceptor)
+            .apply {
+                // Only apply certificate pinning if pins are configured
+                if (certificatePinner.pins.isNotEmpty()) {
+                    certificatePinner(certificatePinner)
+                }
+            }
+            .connectionSpecs(listOf(connectionSpec, ConnectionSpec.CLEARTEXT))
             .addInterceptor { chain ->
-                // Add common headers
+                // Add common headers including User-Agent
+                val userAgent = "Kivara/${APP_VERSION} (Android ${Build.VERSION.SDK_INT})"
                 val request = chain.request().newBuilder()
                     .addHeader("Accept", "application/json")
                     .addHeader("Content-Type", "application/json")
+                    .addHeader("User-Agent", userAgent)
                     .build()
                 chain.proceed(request)
             }
+            .addInterceptor(loggingInterceptor)
             .retryOnConnectionFailure(true)
             .build()
     }

@@ -28,24 +28,18 @@
 # REMOVE LOGGING IN RELEASE
 # ================================================================================================
 
-# Remove all Log calls
+# Remove verbose, debug, and info Log calls (keep warnings and errors for production debugging)
 -assumenosideeffects class android.util.Log {
     public static *** v(...);
     public static *** d(...);
     public static *** i(...);
-    public static *** w(...);
-    public static *** e(...);
-    public static *** wtf(...);
 }
 
-# Remove Timber logging
+# Remove Timber logging (but keep error and warning logs for production debugging)
 -assumenosideeffects class timber.log.Timber {
     public static *** v(...);
     public static *** d(...);
     public static *** i(...);
-    public static *** w(...);
-    public static *** e(...);
-    public static *** wtf(...);
 }
 
 # Remove println statements

@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.horcruxsys.kivara.util.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -15,6 +16,7 @@ import org.junit.Test
  * - Using InstantTaskExecutorRule for LiveData testing
  * - Using MainDispatcherRule for coroutine testing
  * - Using runTest for coroutine tests
+ * - Properly cleaning up observers to prevent memory leaks
  */
 @ExperimentalCoroutinesApi
 class HomeViewModelTest {
@@ -30,6 +32,12 @@ class HomeViewModelTest {
     @Before
     fun setup() {
         viewModel = HomeViewModel()
+    }
+
+    @After
+    fun tearDown() {
+        // Clean up to prevent memory leaks
+        viewModel.text.removeObserver {}
     }
 
     @Test
@@ -60,15 +68,22 @@ class HomeViewModelTest {
     fun `liveData emits values correctly`() {
         // Given - ViewModel is initialized
         val observer = mutableListOf<String>()
-        viewModel.text.observeForever { value ->
+        val liveDataObserver: (String?) -> Unit = { value ->
             value?.let { observer.add(it) }
         }
+        
+        try {
+            viewModel.text.observeForever(liveDataObserver)
 
-        // When - LiveData is observed
-        // (setValue is called in init block)
+            // When - LiveData is observed
+            // (setValue is called in init block)
 
-        // Then - Observer should receive the value
-        assertEquals(1, observer.size)
-        assertEquals("This is home Fragment", observer.first())
+            // Then - Observer should receive the value
+            assertEquals(1, observer.size)
+            assertEquals("This is home Fragment", observer.first())
+        } finally {
+            // Always remove observer to prevent memory leaks
+            viewModel.text.removeObserver(liveDataObserver)
+        }
     }
 }
