@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Kivara Brand Colors -->
+    <color name="kivara_green">#3CB371</color>
+    <color name="kivara_green_light">#90EE90</color>
+    <color name="kivara_green_dark">#2E8B57</color>
 </resources>
