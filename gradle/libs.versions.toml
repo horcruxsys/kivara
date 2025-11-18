@@ -3,6 +3,7 @@
 agp = "8.5.2"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.25"
+detekt = "1.23.0"
 
 # AndroidX Core
 coreKtx = "1.13.1"
@@ -52,7 +53,6 @@ testRunner = "1.6.2"
 archCoreTesting = "2.2.0"
 
 # Code Quality
-detekt = "1.23.6"
 ktlint = "12.1.1"
 
 # Firebase

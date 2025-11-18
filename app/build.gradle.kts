@@ -134,6 +134,9 @@ dependencies {
     
     // Security
     implementation(libs.androidx.security.crypto)
+
+    // Splash
+    implementation("androidx.core:core-splashscreen:1.0.0")
     
     // Network
     implementation(libs.retrofit)
@@ -169,6 +172,11 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.test.runner)
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }
 
 // Detekt configuration

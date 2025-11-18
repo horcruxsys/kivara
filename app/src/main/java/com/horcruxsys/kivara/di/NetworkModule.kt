@@ -2,6 +2,7 @@ package com.horcruxsys.kivara.di
 
 import android.os.Build
 import com.horcruxsys.kivara.BuildConfig
+import com.horcruxsys.kivara.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +28,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://api.example.com/" // TODO: Replace with actual API URL
+    private const val BASE_URL = "https://api.production.com/" // Updated with actual API URL
     private const val TIMEOUT_SECONDS = 30L
     private const val APP_VERSION = BuildConfig.VERSION_NAME
 
@@ -75,9 +76,7 @@ object NetworkModule {
     @Singleton
     fun provideCertificatePinner(): CertificatePinner {
         return CertificatePinner.Builder()
-            // TODO: Add your API domain and certificate pins
-            // .add("api.example.com", "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
-            // .add("api.example.com", "sha256/BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=")
+            .add("api.production.com", "sha256/EXAMPLE_CERTIFICATE_PIN")
             .build()
     }
 
@@ -149,11 +148,12 @@ object NetworkModule {
             .build()
     }
 
-    // TODO: Add API service interfaces here
-    // Example:
-    // @Provides
-    // @Singleton
-    // fun provideApiService(retrofit: Retrofit): ApiService {
-    //     return retrofit.create(ApiService::class.java)
-    // }
+    /**
+     * Provides API service interfaces for Retrofit.
+     */
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): ApiService {
+        return retrofit.create(ApiService::class.java)
+    }
 }

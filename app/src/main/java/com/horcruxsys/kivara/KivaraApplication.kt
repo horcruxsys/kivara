@@ -3,6 +3,7 @@ package com.horcruxsys.kivara
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 /**
  * Application class for Kivara app.
@@ -46,11 +47,11 @@ class KivaraApplication : Application() {
         override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
             // Only log warnings and errors in release builds
             if (priority == android.util.Log.WARN || priority == android.util.Log.ERROR) {
-                // TODO: Send to crash reporting service (e.g., Firebase Crashlytics)
-                // FirebaseCrashlytics.getInstance().log(message)
-                // if (t != null) {
-                //     FirebaseCrashlytics.getInstance().recordException(t)
-                // }
+                // Send logs to Firebase Crashlytics
+                FirebaseCrashlytics.getInstance().log(message)
+                if (t != null) {
+                    FirebaseCrashlytics.getInstance().recordException(t)
+                }
             }
         }
     }

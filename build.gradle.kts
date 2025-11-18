@@ -9,9 +9,30 @@ plugins {
     alias(libs.plugins.ktlint) apply false
 }
 
-// Configure detekt for all projects
+// Ensure Detekt plugin is included in dependencies
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.0")
+    }
+}
+
+// Apply Detekt plugin to all subprojects
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
+
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
+        jvmTarget = "17"
+        reports {
+            html.required.set(true)
+            xml.required.set(false)
+            txt.required.set(false)
+        }
+    }
 }
 
 tasks.register("clean", Delete::class) {

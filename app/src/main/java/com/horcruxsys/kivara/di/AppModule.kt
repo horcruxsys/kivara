@@ -12,6 +12,8 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
+import java.io.IOException
+import java.security.GeneralSecurityException
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -43,9 +45,13 @@ object AppModule {
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
-        } catch (e: Exception) {
+        } catch (e: GeneralSecurityException) {
             // Log the error and fall back to regular SharedPreferences
             Timber.e(e, "Failed to create EncryptedSharedPreferences, falling back to regular SharedPreferences")
+            context.getSharedPreferences("kivara_prefs", Context.MODE_PRIVATE)
+        } catch (e: IOException) {
+            // Log the error and fall back to regular SharedPreferences
+            Timber.e(e, "IO Exception occurred, falling back to regular SharedPreferences")
             context.getSharedPreferences("kivara_prefs", Context.MODE_PRIVATE)
         }
     }
