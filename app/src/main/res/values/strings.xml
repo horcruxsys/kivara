@@ -3,4 +3,12 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    
+    <!-- Auth Strings -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="login_error">Login failed. Please check your credentials.</string>
+    <string name="session_check_error">Failed to check session. Please try again.</string>
 </resources>
